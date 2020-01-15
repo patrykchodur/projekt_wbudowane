@@ -5,6 +5,9 @@
 
 volatile static unsigned counter;
 
+void SysTick_Handler(void) {
+	++counter;
+}
 
 void timer_init(void) {
 	SystemCoreClockUpdate();

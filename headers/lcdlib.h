@@ -43,7 +43,7 @@ void draw_string(uint16_t colour, Point p, const char* str, int rotate, int fold
 // this function return values corresponding to
 // pixel position on lcd
 Point get_position(void);
-Point get_position_with_preciton(int iterations);
+Point get_position_with_precision(int iterations);
 
 // this function sets handler for interrupts caused by
 // touching the screen

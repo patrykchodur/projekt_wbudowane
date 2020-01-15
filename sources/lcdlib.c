@@ -7,7 +7,7 @@
 // various stuff related to board
 #include "LPC17xx.h"
 // for init_ILI9325 function
-#include "LCD_ILI9325"
+#include "LCD_ILI9325.h"
 // for lcdWriteReg and lcdConfiguration functions
 #include "Open1768_LCD.h"
 // touch pannel support
@@ -63,7 +63,7 @@ void clear_screen(void) {
 	clear_screen_with((uint16_t)0xFFFF);
 }
 
-void clear_screen_with(uint16_t colour = 0xFFFF) {
+void clear_screen_with(uint16_t colour) {
 	lcdWriteReg(ADRX_RAM, 0);
 	lcdWriteReg(ADRY_RAM, 0);
 	lcdWriteIndex(DATA_RAM);
@@ -106,31 +106,35 @@ void draw_triangle (uint16_t colour, Point p1, Point p2, Point p3) {
 }
 
 void draw_quadrangle(uint16_t colour, Point p1, Point p2, Point p3, Point p4) {
-	draw_triangle(uint16_t colour, p1, p2, p3);
-	draw_triangle(uint16_t colour, p3, p4, p1);
+	draw_triangle(colour, p1, p2, p3);
+	draw_triangle(colour, p3, p4, p1);
 }
 
 void draw_rectangle(uint16_t colour, Point p1, Point p2) {
 	Point p3 = {p1.x, p2.y};
 	Point p4 = {p2.x, p1.y};
-	draw_quadrangle(uint16_t colour, p1, p3, p2, p4);
+	draw_quadrangle(colour, p1, p3, p2, p4);
 }
 
 /*
 static int point_in_rectangle(Point pt, Point p1, Point p2) {
 	int result = 1;
-	if (p1.x < p2.x)
+	if (p1.x < p2.x) {
 		if (pt.x < p1.x || pt.x > p2.x)
 			return 0;
-	else
+	}
+	else {
 		if (pt.x < p2.x || pt.x > p1.x)
 			return 0;
-	if (p1.y < p2.y)
+	}
+	if (p1.y < p2.y) {
 		if (pt.y < p1.y || pt.y > p2.y)
 			return 0;
-	else
+	}
+	else {
 		if (pt.y < p2.y || pt.y > p1.y)
 			return 0;
+	}
 	return 1;
 }
 
@@ -168,9 +172,9 @@ void draw_rectangle(uint16_t colour, Point p1, Point p2) {
 */
 
 void draw_polygon(uint16_t colour, int number_of_points, ...) {
-	Point* p1;
-	Point* p2;
-	Point* p3;
+	Point p1;
+	Point p2;
+	Point p3;
 
 	va_list argp;
 	va_start(argp, number_of_points);
@@ -184,7 +188,7 @@ void draw_polygon(uint16_t colour, int number_of_points, ...) {
 
 	for (int iter = 0; iter < number_of_points - 2; ++iter) {
 		p3 = va_arg(argp, Point);
-		draw_triangle(colour, *p1, *p2, *p3);
+		draw_triangle(colour, p1, p2, p3);
 		p2 = p3;
 	}
 
@@ -195,7 +199,7 @@ void draw_polygon(uint16_t colour, int number_of_points, ...) {
 static int point_in_circle(Point current_point, Point center, int r) {
 	return ((current_point.x - center.x)*(current_point.x - center.x) + 
 			(current_point.y - center.y)*(current_point.y - center.y)
-			< r * r;
+			< r * r);
 }
 
 
@@ -213,7 +217,7 @@ void draw_circle(uint16_t colour, Point center, int r) {
 		for (int iterx = 0; iterx < DISPLAY_WIDTH; ++iterx) {
 			Point current_point = {iterx, itery};
 
-			if (point_in_triangle(current_point, p1, p2, p3)) {
+			if (point_in_circle(current_point, center, r)) {
 				// small optimalization
 				// if previous point was valid and screen autoincremented
 				// in default direction there is no need for setting
@@ -234,8 +238,8 @@ void draw_circle(uint16_t colour, Point center, int r) {
 }
 
 static void draw_point(uint16_t colour, Point p) {
-	lcdWriteReg(ADDRX_RAM, p.x);
-	lcdWriteReg(ADDRY_RAM, p.y);
+	lcdWriteReg(ADRX_RAM, p.x);
+	lcdWriteReg(ADRY_RAM, p.y);
 	lcdWriteReg(DATA_RAM, colour);
 }
 
@@ -277,7 +281,7 @@ void draw_char(uint16_t colour, unsigned char ascii, Point p, int rotate) {
 
 void draw_string(uint16_t colour, Point p, const char* str, int rotate, int fold) {
 	while (*str) {
-		draw_char(colour, p, *str, rotate);
+		draw_char(colour, *str, p, rotate);
 
 		switch (rotate) {
 			case 0:
@@ -297,7 +301,7 @@ void draw_string(uint16_t colour, Point p, const char* str, int rotate, int fold
 			case 2:
 				p.x -= 8;
 				if (p.x < 16 && fold) {
-					p.x = DISPLAY_WIDTH - 8
+					p.x = DISPLAY_WIDTH - 8;
 					p.y -= 20;
 				}
 				break;
@@ -334,8 +338,8 @@ Point get_position(void) {
 		NVIC_EnableIRQ(EINT3_IRQn);
 	}
 
-	result.x = (y - FRAME_SMALL)/(TP_MAX - 2 * FRAME_SMALL);
-	result.y = (x - FRAME_SMALL)/(TP_MAX - FRAME_SMALL - FRAME_LARGE);
+	result.x = DISPLAY_WIDTH*(y - FRAME_SMALL)/(TP_MAX - 2 * FRAME_SMALL);
+	result.y = DISPLAY_HEIGHT*(x - FRAME_SMALL)/(TP_MAX - FRAME_SMALL - FRAME_LARGE);
 	result.x = result.x < 0 ? 0 : result.x;
 	result.x = result.x >= DISPLAY_WIDTH ? DISPLAY_WIDTH - 1 : result.x;
 	result.y = result.y < 0 ? 0 : result.y;
@@ -343,7 +347,7 @@ Point get_position(void) {
 	return result;
 }
 
-Point get_position_with_preciton(int iterations) {
+Point get_position_with_precision(int iterations) {
 	if (iterations < 1)
 		iterations = 1;
 	Point result = {0, 0};
@@ -360,7 +364,7 @@ Point get_position_with_preciton(int iterations) {
 
 static void (*handler)(void);
 
-void set_iterrupt_on_touch(void (*fp)(void)) {
+void set_interrupt_on_touch(void (*fp)(void)) {
 	handler = fp;
 	is_holding = 0;
 
@@ -399,7 +403,7 @@ void EINT3_IRQHandler(void) {
 		LPC_GPIOINT->IO0IntEnR = 1 << 19;
 	}
 
-	LPC_GPIOINT->IO0IntClr = 1;
+	LPC_GPIOINT->IO0IntClr = 1 << 19;
 }
 
 

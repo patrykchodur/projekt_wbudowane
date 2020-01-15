@@ -3,6 +3,12 @@
 // for measurement of sound length
 #include "timelib.h"
 
+// for starting sound
+#include "soundlib.h"
+
+// timer config
+#include "LPC17xx.h"
+
 struct {
 	unsigned start;
 	int frequency;
@@ -13,12 +19,14 @@ struct {
 #define PLAYER_TIMER_NO 2
 #endif
 
-#define PLAYER_TIMER LPC_TIM##PLAYER_TIMER_NO
+#define PLAYER_TIMER LPC_TIM2
 
 static char is_player_playing_val;
 
 void player_recorder_init(void) {
-	recorder_state = {0, NO_SOUND, 0};
+	recorder_state.start = 0;
+	recorder_state.frequency = NO_SOUND;
+	recorder_state.is_recording = 0;
 
 	is_player_playing_val = 0;
 
@@ -27,13 +35,13 @@ void player_recorder_init(void) {
 	// timer configuration for player
 	
 	// turning on timer
-	LPC_SC->PCONP |= PLAYER_TIMER_NO < 2 ? 1 << 1 + PLAYER_TIMER_NO : 1 << 20 + PLAYER_TIMER_NO;
+	LPC_SC->PCONP |= PLAYER_TIMER_NO < 2 ? 1 << (1 + PLAYER_TIMER_NO) : 1 << (20 + PLAYER_TIMER_NO);
 
 	// peripherial clock set to CCLK/4
 	// no need - default value
 
 	// enable interrupt for timer
-	NVIC_EnableIRQ(TIMER##PLAYER_TIMER_NO##_IRQn);
+	NVIC_EnableIRQ(TIMER2_IRQn);
 
 
 	// TODO prepare eeprom
@@ -49,7 +57,10 @@ void start_record(int set_frequency) {
 	recorder_state.frequency = set_frequency;
 }
 
-static void append_to_eeprom(Sound to_save);
+// TODO implemet it
+static void append_to_eeprom(Sound to_save) {
+	
+}
 
 void end_record(void) {
 	Sound to_save = {millis() - recorder_state.start,
@@ -88,6 +99,11 @@ char has_next_sound() {
 	return 0;
 }
 
+// TODO implemet it
+void erase_saved(void) {
+	
+}
+
 
 // PLAYER
 
@@ -106,7 +122,7 @@ static void start_next_sound(void) {
 
 	// set prescaller for timer
 	// remember that it starts counting from 0
-	PLAYER_TIMER->PR = prescaller - 1;
+	PLAYER_TIMER->PR = prescaler - 1;
 
 	Sound to_play = read_next_sound();
 
@@ -124,10 +140,10 @@ static void start_next_sound(void) {
 		
 }
 
-void Timer##PLAYER_TIMER_NO##_IRQHandler(void) {
+void Timer2_IRQHandler(void) {
 	start_next_sound();
 	// clear interrupt flag
-	LPC_TIMER->IR = 1 << 0;
+	PLAYER_TIMER->IR = 1 << 0;
 }
 
 
@@ -139,7 +155,7 @@ void play_from_memory(void) {
 
 void stop_playing_from_memory(void) {
 	// turn off counter
-	PLAYER_TIMER->LCR = 0;
+	PLAYER_TIMER->CCR = 0;
 	is_player_playing_val = 0;
 	reset_next_sound_to_start();
 }

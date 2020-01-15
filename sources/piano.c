@@ -20,8 +20,17 @@ typedef struct {
 	Note sound;
 } PianoKey;
 
-static PianoKey[8] white_keys;
-static PianoKey[5] black_keys;
+static PianoKey white_keys[8];
+static PianoKey black_keys[5];
+
+PianoKey create_piano_key(Point p1, Point p2, KeyType type, Note sound) {
+	PianoKey result;
+	result.point1 = p1;
+	result.point2 = p2;
+	result.type = type;
+	result.sound = sound;
+	return result;
+}
 
 typedef struct {
 	Point point1;
@@ -51,9 +60,12 @@ void piano_init(void) {
 	int height_y = 25;
 	int empty_y = 5;
 	for (int iter = 0; iter < sizeof(white_keys)/sizeof(PianoKey); ++iter) {
-
-		white_keys[iter] = {{start.x, start.y},
-			{start.x + width_x, start.y + height_y + iter * (height_y + empty_y)}, WHITE, NO_NOTE};
+		Point p1, p2;
+		p1.x = start.x;
+		p1.y = start.y + iter * (height_y + empty_y);
+		p2.x = start.x + width_x;
+		p2.y = start.y + height_y + iter * (height_y + empty_y);
+		white_keys[iter] = create_piano_key(p1, p2, WHITE, NO_NOTE);
 	}
 
 	white_keys[0].sound = C;
@@ -66,20 +78,47 @@ void piano_init(void) {
 	white_keys[7].sound = C2;
 
 	//black keys
-	black_keys[0] = {{100, 35}, {200, 55}, BLACK, Cs};
-	black_keys[1] = {{100, 70}, {200, 90}, BLACK, Ds};
-	black_keys[2] = {{100, 130}, {200, 150}, BLACK, Fs};
-	black_keys[3] = {{100, 160}, {200, 180}, BLACK, Gs};
-	black_keys[4] = {{100, 190}, {200, 210}, BLACK, As};
+	Point p1, p2;
+	p1.x = 100;
+	p1.y = 35;
+	p2.x = 200;
+	p2.y = 55;
+	black_keys[0] = create_piano_key(p1, p2, BLACK, Cs);
+	p1.x = 100;
+	p1.y = 70;
+	p2.x = 200;
+	p2.y = 90;
+	black_keys[1] = create_piano_key(p1, p2, BLACK, Ds);
+	p1.x = 100;
+	p1.y = 130;
+	p2.x = 200;
+	p2.y = 150;
+	black_keys[2] = create_piano_key(p1, p2, BLACK, Fs);
+	p1.x = 100;
+	p1.y = 160;
+	p2.x = 200;
+	p2.y = 180;
+	black_keys[3] = create_piano_key(p1, p2, BLACK, Gs);
+	p1.x = 100;
+	p1.y = 190;
+	p2.x = 200;
+	p2.y = 210;
+	black_keys[4] = create_piano_key(p1, p2, BLACK, As);
 
 
 	// buttons
 	// TODO set propper values
+	/*
+	p1.x = 100;
+	p1.y = 190;
+	p2.x = 200;
+	p2.y = 210;
 	play_stop_button = {{50, 50}, {100, 100}, 0};
 	record_stop_recording_button = {{50, 50}, {100, 100}, 0};
 	erase_recorded_button = {{50, 50}, {100, 100}};
 	increase_volume_button = {{50, 50}, {100, 100}};
 	decrease_volume_button = {{50, 50}, {100, 100}};
+	*/
 
 	volume = 150;
 	set_volume(volume);
@@ -94,7 +133,7 @@ void draw_play_stop_button(void) {
 		draw_rectangle(black, play_stop_button.point1, play_stop_button.point2);
 		// TODO play button triangle
 		Point p1[3] = {{50, 50}, {60, 60}, {70, 70}};
-		draw_triangle(white, p1[0], p1[1], p[2]);
+		draw_triangle(white, p1[0], p1[1], p1[2]);
 	}
 	else {
 		draw_rectangle(black, play_stop_button.point1, play_stop_button.point2);
@@ -113,6 +152,7 @@ void draw_record_stop_recording_button(void){
 		draw_rectangle(black, record_stop_recording_button.point1, record_stop_recording_button.point2);
 		// TODO record button circle
 		Point center = {50, 50};
+		int r = 50;
 		draw_circle(white, center, r);
 	}
 	else {
@@ -130,6 +170,7 @@ void draw_erase_recorded_button(void){
 	draw_rectangle(black, erase_recorded_button.point1, erase_recorded_button.point2);
 
 	// TODO draw trash can
+	
 	Point can[2] = {{50, 50}, {60, 60}};
 	Point top[2] = {{50, 50}, {60, 60}};
 	Point handle[2] = {{50, 50}, {60, 60}};
@@ -169,12 +210,14 @@ void draw_piano(void) {
 	}
 	
 
+	/*
 	// draw buttons
 	draw_play_stop_button();
 	draw_record_stop_recording_button();
 	draw_erase_recorded_button();
 	draw_increase_volume_button();
 	draw_decrease_volume_button();
+	*/
 
 }
 
@@ -191,11 +234,11 @@ static void decrease_volume(void) {
 }
 
 static Note get_note_from_point(Point pt) {
-	for (int iter = 0; iter < sizeof(black_keys/sizeof(PianoKey)); ++iter) {
+	for (int iter = 0; iter < sizeof(black_keys)/sizeof(PianoKey); ++iter) {
 		if (inside_rect(pt, black_keys[iter].point1, black_keys[iter].point2))
 			return black_keys[iter].sound;
 	}
-	for (int iter = 0; iter < sizeof(white_keys/sizeof(PianoKey)); ++iter) {
+	for (int iter = 0; iter < sizeof(white_keys)/sizeof(PianoKey); ++iter) {
 		if (inside_rect(pt, white_keys[iter].point1, white_keys[iter].point2))
 			return white_keys[iter].sound;
 	}
