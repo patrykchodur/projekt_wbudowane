@@ -1,5 +1,5 @@
-.\objects\timelib.o: timelib.c
-.\objects\timelib.o: timelib.h
+.\objects\timelib.o: sources\timelib.c
+.\objects\timelib.o: .\headers\timelib.h
 .\objects\timelib.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\objects\timelib.o: C:\Keil_v5\ARM\PACK\Keil\LPC1700_DFP\2.6.1\Device\Include\LPC17xx.h
 .\objects\timelib.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include\core_cm3.h

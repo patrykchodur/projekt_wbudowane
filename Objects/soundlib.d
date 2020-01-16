@@ -1,6 +1,6 @@
-.\objects\soundlib.o: soundlib.c
-.\objects\soundlib.o: soundlib.h
-.\objects\soundlib.o: common.h
+.\objects\soundlib.o: sources\soundlib.c
+.\objects\soundlib.o: .\headers\soundlib.h
+.\objects\soundlib.o: .\headers\common.h
 .\objects\soundlib.o: C:\Keil_v5\ARM\PACK\Keil\LPC1700_DFP\2.6.1\Device\Include\LPC17xx.h
 .\objects\soundlib.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include\core_cm3.h
 .\objects\soundlib.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h

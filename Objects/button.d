@@ -1,1 +1,1 @@
-.\objects\button.o: button.c
+.\objects\button.o: sources\button.c

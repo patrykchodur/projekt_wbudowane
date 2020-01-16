@@ -106,7 +106,7 @@ void set_volume_f(float volume) {
 	set_volume(volume * (float)0x3FF);
 }
 
-void Timer1_IRQHandler(void) {
+void TIMER1_IRQHandler(void) {
 	if (!dac_state.on) {
 		// clear interrupt flag
 		SOUNDLIB_TIMER->IR = 1 << 0;

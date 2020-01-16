@@ -140,7 +140,7 @@ static void start_next_sound(void) {
 		
 }
 
-void Timer2_IRQHandler(void) {
+void TIMER2_IRQHandler(void) {
 	start_next_sound();
 	// clear interrupt flag
 	PLAYER_TIMER->IR = 1 << 0;

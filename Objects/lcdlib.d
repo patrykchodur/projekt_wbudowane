@@ -1,9 +1,9 @@
-.\objects\lcdlib.o: lcdlib.c
-.\objects\lcdlib.o: lcdlib.h
+.\objects\lcdlib.o: sources\lcdlib.c
+.\objects\lcdlib.o: .\headers\lcdlib.h
 .\objects\lcdlib.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
-.\objects\lcdlib.o: common.h
+.\objects\lcdlib.o: .\headers\common.h
 .\objects\lcdlib.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
-.\objects\lcdlib.o: asciiLib.h
+.\objects\lcdlib.o: .\headers\asciiLib.h
 .\objects\lcdlib.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\objects\lcdlib.o: C:\Keil_v5\ARM\PACK\Keil\LPC1700_DFP\2.6.1\Device\Include\LPC17xx.h
 .\objects\lcdlib.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include\core_cm3.h
@@ -12,7 +12,7 @@
 .\objects\lcdlib.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include\cmsis_armcc.h
 .\objects\lcdlib.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include\mpu_armv7.h
 .\objects\lcdlib.o: C:\Keil_v5\ARM\PACK\Keil\LPC1700_DFP\2.6.1\Device\Include\system_LPC17xx.h
-.\objects\lcdlib.o: LCD_ILI9325.h
-.\objects\lcdlib.o: Open1768_LCD.h
-.\objects\lcdlib.o: TP_Open1768.h
+.\objects\lcdlib.o: .\headers\LCD_ILI9325.h
+.\objects\lcdlib.o: .\headers\Open1768_LCD.h
+.\objects\lcdlib.o: .\headers\TP_Open1768.h
 .\objects\lcdlib.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
