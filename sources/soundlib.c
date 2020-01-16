@@ -71,7 +71,7 @@ static void configure_timer_for_playing_sound(int frequency) {
 
 static void stop_counter(void) {
 	// turn off counter
-	SOUNDLIB_TIMER->CCR = 0;
+	SOUNDLIB_TIMER->TCR = 0;
 }
 
 void start_sound(int frequency) {
@@ -112,11 +112,12 @@ void TIMER1_IRQHandler(void) {
 		SOUNDLIB_TIMER->IR = 1 << 0;
 		return;
 	}
-	unsigned int value = dac_state.high ? 0 : dac_state.volume & 0x3FF;
-	LPC_DAC->DACR = value << 6;
+	unsigned int value = dac_state.high ? 0 : (dac_state.volume & 0x3FF);
+	LPC_DAC->DACR = (1 << 16) | (value << 6);
 	dac_state.high = !dac_state.high;
 	// clear interrupt flag
 	SOUNDLIB_TIMER->IR = 1 << 0;
+	NVIC_ClearPendingIRQ(TIMER_IRQn);
 }
 
 char is_playing(void) {
