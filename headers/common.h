@@ -1,6 +1,16 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#define __TIMER_IRQn_PASTE(x) TIMER ## x ## _IRQn
+#define TIMER_IRQn_EVAL(x) __TIMER_IRQn_PASTE(x)
+
+#define __TIMER_IRQHandler_PASTE(x) TIMER ## x ## _IRQHandler
+#define TIMER_IRQHandler_EVAL(x) __TIMER_IRQHandler_PASTE(x)
+
+#define __LPC_TIM_PASTE(x) LPC_TIM ## x
+#define LPC_TIM_EVAL(x) __LPC_TIM_PASTE(x)
+
+
 // notes used by the piano
 typedef enum{
 	NO_NOTE = -1,

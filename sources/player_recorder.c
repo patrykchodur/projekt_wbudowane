@@ -19,7 +19,9 @@ struct {
 #define PLAYER_TIMER_NO 2
 #endif
 
-#define PLAYER_TIMER LPC_TIM2
+#define PLAYER_TIMER_LPC LPC_TIM_EVAL(PLAYER_TIMER_NO)
+#define PLAYER_TIMER_IRQn TIMER_IRQn_EVAL(PLAYER_TIMER_NO)
+#define PLAYER_TIMER_Handler TIMER_IRQn_EVAL(PLAYER_TIMER_NO)
 
 static char is_player_playing_val;
 
@@ -41,7 +43,7 @@ void player_recorder_init(void) {
 	// no need - default value
 
 	// enable interrupt for timer
-	NVIC_EnableIRQ(TIMER2_IRQn);
+	NVIC_EnableIRQ(PLAYER_TIMER_IRQn);
 
 
 	// TODO prepare eeprom
@@ -115,23 +117,23 @@ static void start_next_sound(void) {
 	}
 
 	// turn on interrupts
-	PLAYER_TIMER->MCR = 1 << 0;
+	PLAYER_TIMER_LPC->MCR = 1 << 0;
 
 	// set prescaler for 1 ms
 	int prescaler = (SystemCoreClock/4)/1000;
 
 	// set prescaller for timer
 	// remember that it starts counting from 0
-	PLAYER_TIMER->PR = prescaler - 1;
+	PLAYER_TIMER_LPC->PR = prescaler - 1;
 
 	Sound to_play = read_next_sound();
 
 	// setting match register - numer of tick
 	// to run handler
-	PLAYER_TIMER->MR0 = to_play.length_in_millis;
+	PLAYER_TIMER_LPC->MR0 = to_play.length_in_millis;
 
 	// turn on counter
-	PLAYER_TIMER->TCR = 1 << 0;
+	PLAYER_TIMER_LPC->TCR = 1 << 0;
 
 	if (to_play.frequency > 0) {
 		start_sound(to_play.frequency);
@@ -140,10 +142,10 @@ static void start_next_sound(void) {
 		
 }
 
-void TIMER2_IRQHandler(void) {
+void PLAYER_TIMER_Handler(void) {
 	start_next_sound();
 	// clear interrupt flag
-	PLAYER_TIMER->IR = 1 << 0;
+	PLAYER_TIMER_LPC->IR = 1 << 0;
 }
 
 
@@ -155,7 +157,7 @@ void play_from_memory(void) {
 
 void stop_playing_from_memory(void) {
 	// turn off counter
-	PLAYER_TIMER->CCR = 0;
+	PLAYER_TIMER_LPC->CCR = 0;
 	is_player_playing_val = 0;
 	reset_next_sound_to_start();
 }

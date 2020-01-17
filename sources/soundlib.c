@@ -9,8 +9,9 @@
 #define SOUNDLIB_TIMER_NO 1
 #endif
 
-#define SOUNDLIB_TIMER LPC_TIM1
-#define TIMER_IRQn TIMER1_IRQn
+#define SOUNDLIB_TIMER_LPC LPC_TIM_EVAL(SOUNDLIB_TIMER_NO)
+#define SOUNDLIB_TIMER_IRQn TIMER_IRQn_EVAL(SOUNDLIB_TIMER_NO)
+#define SOUNDLIB_TIMER_Handler TIMER_IRQHandler_EVAL(SOUNDLIB_TIMER_NO)
 
 volatile struct {
 	int volume;
@@ -28,7 +29,7 @@ void dac_init(void) {
 	// no need - default value
 
 	// enable interrupt for timer
-	NVIC_EnableIRQ(TIMER_IRQn);
+	NVIC_EnableIRQ(SOUNDLIB_TIMER_IRQn);
 
 	// dac configuration
 
@@ -47,7 +48,7 @@ void dac_init(void) {
 static void configure_timer_for_playing_sound(int frequency) {
 
 	// turn on interrupts and auto reset of counter
-	SOUNDLIB_TIMER->MCR = 1 << 0 | 1 << 1;
+	SOUNDLIB_TIMER_LPC->MCR = 1 << 0 | 1 << 1;
 
 	SystemCoreClockUpdate();
 
@@ -57,21 +58,21 @@ static void configure_timer_for_playing_sound(int frequency) {
 	
 	// set prescaller for timer
 	// remember that it starts counting from 0
-	SOUNDLIB_TIMER->PR = prescaler - 1;
+	SOUNDLIB_TIMER_LPC->PR = prescaler - 1;
 
 	// setting match register - numer of tick
 	// to run handler
 	// 2 every period (turn on and off speaker)
-	SOUNDLIB_TIMER->MR0 = 100000/(frequency * 2);
+	SOUNDLIB_TIMER_LPC->MR0 = 100000/(frequency * 2);
 
 	// turn on counter
-	SOUNDLIB_TIMER->TCR = 1 << 0;
+	SOUNDLIB_TIMER_LPC->TCR = 1 << 0;
 
 }
 
 static void stop_counter(void) {
 	// turn off counter
-	SOUNDLIB_TIMER->TCR = 0;
+	SOUNDLIB_TIMER_LPC->TCR = 0;
 }
 
 void start_sound(int frequency) {
@@ -106,18 +107,18 @@ void set_volume_f(float volume) {
 	set_volume(volume * (float)0x3FF);
 }
 
-void TIMER1_IRQHandler(void) {
+void SOUNDLIB_TIMER_Handler(void) {
 	if (!dac_state.on) {
 		// clear interrupt flag
-		SOUNDLIB_TIMER->IR = 1 << 0;
+		SOUNDLIB_TIMER_LPC->IR = 1 << 0;
 		return;
 	}
 	unsigned int value = dac_state.high ? 0 : (dac_state.volume & 0x3FF);
 	LPC_DAC->DACR = (1 << 16) | (value << 6);
 	dac_state.high = !dac_state.high;
 	// clear interrupt flag
-	SOUNDLIB_TIMER->IR = 1 << 0;
-	NVIC_ClearPendingIRQ(TIMER_IRQn);
+	SOUNDLIB_TIMER_LPC->IR = 1 << 0;
+	NVIC_ClearPendingIRQ(SOUNDLIB_TIMER_IRQn);
 }
 
 char is_playing(void) {
