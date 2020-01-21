@@ -44,7 +44,22 @@ typedef struct {
 } Switch;
 	
 
-static Switch play_stop_button;
+static Switch createSwitch(Point p1, Point p2) {
+	Switch result;
+	result.switched_on = 0;
+	result.point1 = p1;
+	result.point2 = p2;
+	return result;
+}
+
+static Button createButton(Point p1, Point p2) {
+	Button result;
+	result.point1 = p1;
+	result.point2 = p2;
+	return result;
+}
+
+static Button play_stop_button;
 static Switch record_stop_recording_button;
 static Button erase_recorded_button;
 static Button increase_volume_button;
@@ -108,16 +123,24 @@ void piano_init(void) {
 
 	// buttons
 	// TODO set propper values
+	
+	p1.x = 20;
+	p1.y = 270;
+	p2.x = 50;
+	p2.y = 300;
+	play_stop_button = createButton(p1, p2);
+	p1.x = 210;
+	p1.y = 30;
+	p2.x = 230;
+	p2.y = 50;
+	increase_volume_button = createButton(p1, p2);
+	p1.y += 30;
+	p2.y += 30;
+	decrease_volume_button = createButton(p1, p2);;
+
 	/*
-	p1.x = 100;
-	p1.y = 190;
-	p2.x = 200;
-	p2.y = 210;
-	play_stop_button = {{50, 50}, {100, 100}, 0};
 	record_stop_recording_button = {{50, 50}, {100, 100}, 0};
 	erase_recorded_button = {{50, 50}, {100, 100}};
-	increase_volume_button = {{50, 50}, {100, 100}};
-	decrease_volume_button = {{50, 50}, {100, 100}};
 	*/
 
 	volume = 150;
@@ -129,19 +152,10 @@ void draw_play_stop_button(void) {
 	// default state
 	uint16_t black = get_colour(0, 0, 0);
 	uint16_t white = get_colour(255, 255, 255);
-	if (!play_stop_button.switched_on) {
-		draw_rectangle(black, play_stop_button.point1, play_stop_button.point2);
-		// TODO play button triangle
-		Point p1[3] = {{50, 50}, {60, 60}, {70, 70}};
-		draw_triangle(white, p1[0], p1[1], p1[2]);
-	}
-	else {
-		draw_rectangle(black, play_stop_button.point1, play_stop_button.point2);
-		// TODO square in stop
-		Point p1 = {50, 50};
-		Point p2 = {60, 60};
-		draw_rectangle(white, p1, p2);
-	}
+	draw_rectangle(black, play_stop_button.point1, play_stop_button.point2);
+	// TODO play button triangle
+	Point p1[3] = {{30, 275}, {45, 285}, {30, 295}};
+	draw_triangle(white, p1[0], p1[1], p1[2]);
 }
 
 void draw_record_stop_recording_button(void){
@@ -183,8 +197,16 @@ void draw_increase_volume_button(void){
 	draw_rectangle(black, increase_volume_button.point1, increase_volume_button.point2);
 	
 	// TODO drawing plus sign
-	Point p1 = {50, 50};
-	draw_char(white, '+', p1, 1);
+	Point p1 = {212, 40};
+	Point p2 = {225, 42};
+	draw_rectangle(white, p1, p2);
+	p1.x = 217; 
+	p1.y = 35;
+	p2.x = 219;
+	p2.y = 49;
+	draw_rectangle(white, p1, p2);
+
+
 }
 void draw_decrease_volume_button(void){
 	uint16_t black = get_colour(0, 0, 0);
@@ -193,8 +215,12 @@ void draw_decrease_volume_button(void){
 	draw_rectangle(black, decrease_volume_button.point1, decrease_volume_button.point2);
 	
 	// TODO drawing plus sign
-	Point p1 = {50, 50};
-	draw_char(white, '-', p1, 1);
+	Point p1, p2;
+	p1.x = 217; 
+	p1.y = 35+30;
+	p2.x = 219;
+	p2.y = 49+30;
+	draw_rectangle(white, p1, p2);
 
 }
 
@@ -211,13 +237,15 @@ void draw_piano(void) {
 	}
 	
 
-	/*
+	
 	// draw buttons
 	draw_play_stop_button();
-	draw_record_stop_recording_button();
-	draw_erase_recorded_button();
 	draw_increase_volume_button();
 	draw_decrease_volume_button();
+
+	/*
+	draw_record_stop_recording_button();
+	draw_erase_recorded_button();
 	*/
 
 }
@@ -262,7 +290,7 @@ void piano_action(Point pt, char pressed) {
 	if (is_player_playing()){
 		// check stop button
 		if (pressed && inside_rect(pt, play_stop_button.point1, play_stop_button.point2)) {
-			play_stop_button.switched_on = 0;
+			//play_stop_button.switched_on = 0;
 			draw_play_stop_button();
 			stop_playing_from_memory();
 			return;
@@ -291,7 +319,7 @@ void piano_action(Point pt, char pressed) {
 			decrease_volume();
 			return;
 		}
-		if (!play_stop_button.switched_on && inside_rect(pt, play_stop_button.point1, play_stop_button.point2)) {
+		if ( inside_rect(pt, play_stop_button.point1, play_stop_button.point2)) {
 			play_from_memory();
 			draw_play_stop_button();
 			return;
