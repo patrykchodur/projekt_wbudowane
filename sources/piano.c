@@ -199,6 +199,7 @@ void draw_decrease_volume_button(void){
 }
 
 void draw_piano(void) {
+	clear_screen_with(get_colour(0xFF, 0x0, 0xFF));
 	uint16_t white = get_colour(255, 255, 255);
 	for (int iter = 0; iter < sizeof(white_keys)/sizeof(PianoKey); ++iter) {
 		draw_rectangle(white, white_keys[iter].point1, white_keys[iter].point2);

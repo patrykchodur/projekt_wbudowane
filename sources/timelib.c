@@ -26,13 +26,13 @@ unsigned seconds(void) {
 void sleep_for_millis(unsigned val) {
 	unsigned start = millis();
 	while (millis() - start < val)
-		__WFI();
+		__NOP();
 }
 
 void sleep_for_seconds(unsigned val) {
 	unsigned start = seconds();
 	while (seconds() - start < val)
-		__WFI();
+		__NOP();
 }
 
 

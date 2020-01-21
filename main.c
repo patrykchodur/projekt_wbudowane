@@ -30,7 +30,7 @@ void main_setup(void) {
 
 void main_loop(void) {
 	while (!action_on_touchscreen)
-		sleep_for_millis(10);
+		sleep_for_millis(1);
 	Point pt = get_position();
 	piano_action(pt, is_touchpanel_pressed());
 	action_on_touchscreen = 0;
@@ -41,6 +41,6 @@ int main(void) {
 	main_setup();
 	while(1) {
 		main_loop();
-		sleep_for_millis(10);
+		sleep_for_millis(1);
 	}
 }

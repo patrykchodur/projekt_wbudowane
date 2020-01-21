@@ -389,20 +389,15 @@ void disable_interrupt_on_touch(void) {
 
 
 char is_touchpanel_pressed(void) {
-	return is_holding;
+	Point pt = get_position();
+	return pt.x != 0x0 && pt.y != 0x13F;
 }
 
 void EINT3_IRQHandler(void) {
-	is_holding = !is_holding;
 	handler();
-	if (is_holding) {
-		// set gpio interrupt for falling edge on pin 19
-		LPC_GPIOINT->IO0IntEnF = 1 << 19;
-	}
-	else {
-		// set gpio interrupt for rising edge on pin 19
-		LPC_GPIOINT->IO0IntEnR = 1 << 19;
-	}
+
+	LPC_GPIOINT->IO0IntEnF = 1 << 19;
+	LPC_GPIOINT->IO0IntEnR = 1 << 19;
 
 	LPC_GPIOINT->IO0IntClr = 1 << 19;
 }
