@@ -21,6 +21,7 @@ void main_setup(void) {
 
 	piano_init();
 	draw_piano();
+	//start_sound(440);
 
 	action_on_touchscreen = 0;
 
@@ -30,8 +31,9 @@ void main_setup(void) {
 void main_loop(void) {
 	while (!action_on_touchscreen)
 		sleep_for_millis(10);
-	Point pt = get_position_with_precision(5);
+	Point pt = get_position();
 	piano_action(pt, is_touchpanel_pressed());
+	action_on_touchscreen = 0;
 }
 
 

@@ -17,6 +17,7 @@ volatile struct {
 	int volume;
 	char high;
 	char on;
+	char leave_handler;
 } dac_state;
 
 void dac_init(void) {
@@ -36,13 +37,13 @@ void dac_init(void) {
 	dac_state.volume = 0;
 	dac_state.high = 0;
 	dac_state.on = 0;
+	dac_state.leave_handler = 0;
 
 	// enable dac function on P0.26
 	LPC_PINCON->PINSEL1 = 2 << 20;
 
 	// setting bias
 	LPC_DAC->DACR = 1 << 16;
-
 }
 
 static void configure_timer_for_playing_sound(int frequency) {
@@ -107,8 +108,11 @@ void set_volume_f(float volume) {
 	set_volume(volume * (float)0x3FF);
 }
 
+
 void SOUNDLIB_TIMER_Handler(void) {
-	if (!dac_state.on) {
+	if (!dac_state.on || dac_state.leave_handler) {
+		if (dac_state.leave_handler)
+			dac_state.leave_handler = 0;
 		// clear interrupt flag
 		SOUNDLIB_TIMER_LPC->IR = 1 << 0;
 		return;
@@ -116,6 +120,7 @@ void SOUNDLIB_TIMER_Handler(void) {
 	unsigned int value = dac_state.high ? 0 : (dac_state.volume & 0x3FF);
 	LPC_DAC->DACR = (1 << 16) | (value << 6);
 	dac_state.high = !dac_state.high;
+	dac_state.leave_handler = 1;
 	// clear interrupt flag
 	SOUNDLIB_TIMER_LPC->IR = 1 << 0;
 	NVIC_ClearPendingIRQ(SOUNDLIB_TIMER_IRQn);

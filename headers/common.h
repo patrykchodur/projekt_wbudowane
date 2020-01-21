@@ -35,18 +35,29 @@ typedef struct {
 } Point;
 
 static int inside_rect(Point pt, Point p1, Point p2) {
-	if (p1.x < p2.x)
-		if (pt.x < p1.x || pt.x > p2.x)
+	// checking x
+	if (p1.x < p2.x) {
+		if (pt.x < p1.x || pt.x > p2.x) {
 			return 0;
-	else
-		if (pt.x < p2.x || pt.x > p1.x)
+		}
+	}
+	else {
+		if (pt.x < p2.x || pt.x > p1.x) {
 			return 0;
-	if (p1.y < p2.y)
-		if (pt.y < p1.y || pt.y > p2.y)
+		}
+	}
+	
+	// checking y
+	if (p1.y < p2.y) {
+		if (pt.y < p1.y || pt.y > p2.y) {
 			return 0;
-	else
-		if (pt.y < p2.y || pt.y > p1.y)
+		}
+	}
+	else {
+		if (pt.y < p2.y || pt.y > p1.y) {
 			return 0;
+		}
+	}
 	return 1;
 }
 
