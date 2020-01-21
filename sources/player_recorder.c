@@ -21,7 +21,7 @@ struct {
 
 #define PLAYER_TIMER_LPC LPC_TIM_EVAL(PLAYER_TIMER_NO)
 #define PLAYER_TIMER_IRQn TIMER_IRQn_EVAL(PLAYER_TIMER_NO)
-#define PLAYER_TIMER_Handler TIMER_IRQn_EVAL(PLAYER_TIMER_NO)
+#define PLAYER_TIMER_Handler TIMER_IRQHandler_EVAL(PLAYER_TIMER_NO)
 
 static char is_player_playing_val;
 

@@ -4,3 +4,5 @@
 .DS_Store
 *.tar.gz
 test*
+DebugConfig
+RTE
