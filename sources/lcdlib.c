@@ -110,13 +110,14 @@ void draw_quadrangle(uint16_t colour, Point p1, Point p2, Point p3, Point p4) {
 	draw_triangle(colour, p3, p4, p1);
 }
 
+/*
 void draw_rectangle(uint16_t colour, Point p1, Point p2) {
 	Point p3 = {p1.x, p2.y};
 	Point p4 = {p2.x, p1.y};
 	draw_quadrangle(colour, p1, p3, p2, p4);
 }
+*/
 
-/*
 static int point_in_rectangle(Point pt, Point p1, Point p2) {
 	int result = 1;
 	if (p1.x < p2.x) {
@@ -169,7 +170,7 @@ void draw_rectangle(uint16_t colour, Point p1, Point p2) {
 		}
 	}
 }
-*/
+
 
 void draw_polygon(uint16_t colour, int number_of_points, ...) {
 	Point p1;
