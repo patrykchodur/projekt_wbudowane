@@ -159,8 +159,7 @@ void draw_play_stop_button(void) {
 	uint16_t black = get_colour(0, 0, 0);
 	uint16_t white = get_colour(255, 255, 255);
 	draw_rectangle(black, play_stop_button.point1, play_stop_button.point2);
-	// TODO play button triangle
-	Point p1[3] = {{30, 275}, {45, 285}, {30, 295}};
+	Point p1[3] = {{30, 275}, {45, 275}, {37, 290}};
 	draw_triangle(white, p1[0], p1[1], p1[2]);
 }
 
