@@ -32,6 +32,8 @@ Sound read_next_sound(void);
 // 0 otherwise
 char has_next_sound(void);
 
+char is_recording(void);
+
 // PLAYER
 
 // always starts from beginning

@@ -65,6 +65,8 @@ static Button erase_recorded_button;
 static Button increase_volume_button;
 static Button decrease_volume_button;
 
+static char start_recording_pressed = 0;
+
 static int volume;
 
 
@@ -122,7 +124,6 @@ void piano_init(void) {
 
 
 	// buttons
-	// TODO set propper values
 	
 	p1.x = 20;
 	p1.y = 270;
@@ -167,9 +168,8 @@ void draw_record_stop_recording_button(void){
 	uint16_t black = get_colour(0, 0, 0);
 	uint16_t white = get_colour(255, 255, 255);
 
-	if (!record_stop_recording_button.switched_on) {
+	if (!is_recording() && !start_recording_pressed) {
 		draw_rectangle(black, record_stop_recording_button.point1, record_stop_recording_button.point2);
-		// TODO record button circle
 		Point center = {154, 285};
 		int r = 10;
 		draw_circle(white, center, r);
@@ -286,7 +286,7 @@ static char is_key_playing(void) {
 static void stop_key_playing(void) {
 	if (is_key_playing())
 		stop_sound();
-	if (record_stop_recording_button.switched_on)
+	if (is_recording())
 		end_record();
 }
 
@@ -310,8 +310,10 @@ void piano_action(Point pt, char pressed) {
 		Note tmp = get_note_from_point(pt);
 		if (tmp != NO_NOTE) {
 			start_note(tmp);
-			if (record_stop_recording_button.switched_on)
+			if (is_recording() || start_recording_pressed) {
+				start_recording_pressed = 0;
 				start_record(note_to_frequency(tmp));
+			}
 			return;
 		}
 
@@ -329,8 +331,14 @@ void piano_action(Point pt, char pressed) {
 			draw_play_stop_button();
 			return;
 		}
-		if (!record_stop_recording_button.switched_on && inside_rect(pt, record_stop_recording_button.point1, record_stop_recording_button.point2)) {
-			record_stop_recording_button.switched_on = 1;
+		if (inside_rect(pt, record_stop_recording_button.point1, record_stop_recording_button.point2)) {
+			if (is_recording()) {
+				end_recording();
+				start_recording_pressed = 0;
+			}
+			else {
+				start_recording_pressed = 1;
+			}
 			draw_record_stop_recording_button();
 			return;
 		}

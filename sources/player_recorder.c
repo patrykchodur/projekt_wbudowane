@@ -123,6 +123,10 @@ char has_next_sound() {
 	return current_position[1].frequency != NO_SOUND;
 }
 
+char is_recording(void) {
+	return recorder_state.is_recording;
+}
+
 // TODO implemet it
 void erase_saved(void) {
 
