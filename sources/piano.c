@@ -136,12 +136,18 @@ void piano_init(void) {
 	increase_volume_button = createButton(p1, p2);
 	p1.y += 30;
 	p2.y += 30;
-	decrease_volume_button = createButton(p1, p2);;
+	decrease_volume_button = createButton(p1, p2);
 
-	/*
-	record_stop_recording_button = {{50, 50}, {100, 100}, 0};
-	erase_recorded_button = {{50, 50}, {100, 100}};
-	*/
+	p1.x = 20 + 50;
+	p1.y = 270;
+	p2.x = 50 + 50;
+	p2.y = 300;
+	record_stop_recording_button = createButton(p1, p2);
+	p1.x = 20 + 100;
+	p1.y = 270;
+	p2.x = 50 + 100;
+	p2.y = 300;
+	erase_recorded_button = createButton(p1, p2);
 
 	volume = 150;
 	set_volume(volume);
