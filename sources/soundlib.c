@@ -48,6 +48,7 @@ void dac_init(void) {
 
 static void configure_timer_for_playing_sound(int frequency) {
 
+
 	// turn on interrupts and auto reset of counter
 	SOUNDLIB_TIMER_LPC->MCR = 1 << 0 | 1 << 1;
 
@@ -66,14 +67,20 @@ static void configure_timer_for_playing_sound(int frequency) {
 	// 2 every period (turn on and off speaker)
 	SOUNDLIB_TIMER_LPC->MR0 = 100000/(frequency * 2);
 
+	NVIC_ClearPendingIRQ(SOUNDLIB_TIMER_IRQn);
+	NVIC_EnableIRQ(SOUNDLIB_TIMER_IRQn);
+
 	// turn on counter
 	SOUNDLIB_TIMER_LPC->TCR = 1 << 0;
+	SOUNDLIB_TIMER_LPC->TC = 0;
+
 
 }
 
 static void stop_counter(void) {
 	// turn off counter
 	SOUNDLIB_TIMER_LPC->TCR = 0;
+	SOUNDLIB_TIMER_LPC->TC = 0;
 }
 
 void start_sound(int frequency) {
