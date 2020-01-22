@@ -60,7 +60,7 @@ static Button createButton(Point p1, Point p2) {
 }
 
 static Button play_stop_button;
-static Switch record_stop_recording_button;
+static Button record_stop_recording_button;
 static Button erase_recorded_button;
 static Button increase_volume_button;
 static Button decrease_volume_button;
