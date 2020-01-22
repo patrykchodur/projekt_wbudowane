@@ -170,8 +170,8 @@ void draw_record_stop_recording_button(void){
 	if (!record_stop_recording_button.switched_on) {
 		draw_rectangle(black, record_stop_recording_button.point1, record_stop_recording_button.point2);
 		// TODO record button circle
-		Point center = {50, 50};
-		int r = 50;
+		Point center = {154, 285};
+		int r = 10;
 		draw_circle(white, center, r);
 	}
 	else {
@@ -248,10 +248,10 @@ void draw_piano(void) {
 	draw_increase_volume_button();
 	draw_decrease_volume_button();
 
-	/*
+	
 	draw_record_stop_recording_button();
 	draw_erase_recorded_button();
-	*/
+	
 
 }
 
@@ -341,5 +341,4 @@ void piano_action(Point pt, char pressed) {
 
 	}
 }
-
 
