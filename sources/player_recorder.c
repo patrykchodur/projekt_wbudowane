@@ -25,6 +25,11 @@ struct {
 
 static char is_player_playing_val;
 
+// end on frequency = 0;
+static Sound saved_sounds[100];
+static Sound* current_position;
+
+
 void player_recorder_init(void) {
 	recorder_state.start = 0;
 	recorder_state.frequency = NO_SOUND;
@@ -45,9 +50,10 @@ void player_recorder_init(void) {
 	// enable interrupt for timer
 	NVIC_EnableIRQ(PLAYER_TIMER_IRQn);
 
-
 	// TODO prepare eeprom
 
+
+	reset_next_sound_to_start();
 }
 
 void start_record(int set_frequency) {
@@ -61,7 +67,10 @@ void start_record(int set_frequency) {
 
 // TODO implemet it
 static void append_to_eeprom(Sound to_save) {
-	
+	current_position++;
+	*current_position = to_save;
+	current_position[1].frequency = -1;
+
 }
 
 void end_record(void) {
@@ -80,8 +89,8 @@ void end_recording(void) {
 
 static Sound read_next_from_eeprom(void){
 	// TODO read some valid data
-	Sound result = {-1, 100};
-	return result;
+	current_position++;
+	return *current_position;
 }
 
 Sound read_next_sound(void) {
@@ -89,7 +98,10 @@ Sound read_next_sound(void) {
 }
 
 static void reset_eeprom_position(void) {
+	current_position = saved_sounds - 1;
+
 	// TODO actual reseting
+	
 
 }
 
@@ -98,12 +110,14 @@ void reset_next_sound_to_start(void) {
 }
 
 char has_next_sound() {
-	return 0;
+	return current_position[1].frequency > 0;
 }
 
 // TODO implemet it
 void erase_saved(void) {
-	
+
+	saved_sounds[0].frequency = -1; 
+	reset_next_sound_to_start();
 }
 
 
