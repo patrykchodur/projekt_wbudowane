@@ -1,8 +1,8 @@
 #ifndef PLAYER_RECORDER_H
 #define PLAYER_RECORDER_H
 
-static const int SILENCE = -1;
-static const int NO_SOUND = 0;
+static const int NO_SOUND = -1;
+static const int SILENCE = 0;
 
 // RECORDER
 
