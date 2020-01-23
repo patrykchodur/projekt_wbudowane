@@ -30,6 +30,7 @@ static char is_player_playing_val;
 static Sound saved_sounds[100];
 static Sound* current_position;
 
+static void reset_eeprom_position(void);
 
 void player_recorder_init(void) {
 	recorder_state.start = 0;
@@ -81,8 +82,7 @@ static void append_to_eeprom(Sound to_save) {
 void end_record(void) {
 	if (!recorder_state.unfinnished_record)
 		return;
-	Sound to_save = {millis() - recorder_state.start,
-		recorder_state.frequency};
+	Sound to_save = {recorder_state.frequency, millis() - recorder_state.start};
 	append_to_eeprom(to_save);
 	recorder_state.unfinnished_record = 0;
 	start_record(SILENCE);
