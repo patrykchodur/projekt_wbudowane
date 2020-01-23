@@ -94,6 +94,7 @@ void end_recording(void) {
 	end_record();
 	Sound end = {NO_SOUND, 0};
 	append_to_eeprom(end);
+	reset_next_sound_to_start();
 }
 
 
