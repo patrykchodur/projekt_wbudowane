@@ -27,10 +27,12 @@ struct {
 static char is_player_playing_val;
 
 // end on frequency = 0;
-static Sound saved_sounds[100];
+static Sound saved_sounds[128];
 static Sound* current_position;
 
 static void reset_eeprom_position(void);
+static void copy_ram_to_flash(void);
+static void copy_flash_to_ram(void);
 
 void player_recorder_init(void) {
 	recorder_state.start = 0;
@@ -57,9 +59,9 @@ void player_recorder_init(void) {
 
 
 	reset_next_sound_to_start();
-	// TODO dont erase
-	erase_saved();
+
 	reset_eeprom_position();
+	copy_flash_to_ram();
 }
 
 void start_record(int set_frequency) {
@@ -95,6 +97,7 @@ void end_recording(void) {
 	Sound end = {NO_SOUND, 0};
 	append_to_eeprom(end);
 	reset_next_sound_to_start();
+	copy_ram_to_flash();
 }
 
 
@@ -135,6 +138,7 @@ void erase_saved(void) {
 		saved_sounds[iter].frequency = NO_SOUND;
 	}
 	reset_next_sound_to_start();
+	copy_ram_to_flash();
 }
 
 
@@ -199,12 +203,48 @@ char is_player_playing(void) {
 
 // IAP
 #define IAP_LOCATION 0x1FFF1FF1U
+#define IAP_START_MEMORY 0x00078000U
 
 unsigned long command[5];
 unsigned long output[5];
 
-typedef void (*IAP)(unsigned int command [], unsigned int output[]);
+typedef void (*IAP)(unsigned long command [], unsigned long output[]);
 
 IAP iap_entry = (IAP) IAP_LOCATION;
 
+static void copy_ram_to_flash(void) {
+	// prepare sector
+	command[0] = 50;
+	command[1] = 0x1D;
+	command[2] = 0x1D;
+	iap_entry(command, output);
 
+	// erase 
+	command[0] = 52;
+	command[1] = 0x1D;
+	command[2] = 0x1D;
+	command[3] = SystemCoreClock/1000;
+	iap_entry(command, output);
+	
+	// prepare sector
+	command[0] = 50;
+	command[1] = 0x1D;
+	command[2] = 0x1D;
+	iap_entry(command, output);
+	
+	// command number
+	SystemCoreClockUpdate();
+	command[0] = 51;
+	command[1] = IAP_START_MEMORY;
+	command[2] = (unsigned long)saved_sounds;
+	command[3] = sizeof(saved_sounds);
+	command[4] = SystemCoreClock/1000;
+	iap_entry(command, output);
+
+}
+
+static void copy_flash_to_ram(void) {
+	for (int iter = 0; iter < sizeof(saved_sounds)/sizeof(Sound); ++iter) {
+		saved_sounds[iter] = ((Sound*)IAP_START_MEMORY)[iter];
+	}
+}
