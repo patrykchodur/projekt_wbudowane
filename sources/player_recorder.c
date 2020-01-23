@@ -131,7 +131,9 @@ char is_recording(void) {
 // TODO implemet it
 void erase_saved(void) {
 
-	saved_sounds[0].frequency = NO_SOUND; 
+	for (int iter = 0; iter < sizeof(saved_sounds)/sizeof(Sound); ++iter) {
+		saved_sounds[iter].frequency = NO_SOUND;
+	}
 	reset_next_sound_to_start();
 }
 
