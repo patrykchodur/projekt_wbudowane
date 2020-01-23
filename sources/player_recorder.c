@@ -194,3 +194,15 @@ void stop_playing_from_memory(void) {
 char is_player_playing(void) {
 	return is_player_playing_val;
 }
+
+// IAP
+#define IAP_LOCATION 0x1FFF1FF1U
+
+unsigned long command[5];
+unsigned long output[5];
+
+typedef void (*IAP)(unsigned int command [], unsigned int output[]);
+
+IAP iap_entry = (IAP) IAP_LOCATION;
+
+
